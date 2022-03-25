@@ -320,7 +320,7 @@ int main()
     // Light positions
     std::vector<glm::vec3> lightPositions;
     lightPositions.push_back(glm::vec3( 5.0f, 5.5f,  1.5f));
-    lightPositions.push_back(glm::vec3(10.0f, 1.0f, -5.0f));
+    lightPositions.push_back(glm::vec3(37.0f, -1.0f, -15.0f));
 
     // Light colors
     std::vector<glm::vec3> lightColors;
