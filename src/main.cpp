@@ -240,8 +240,10 @@ int main()
 
     // load models
     // -----------
-    Model hallModel("resources/objects/apocalyptic-city/source/Apocalyptic City.obj");
-    hallModel.SetShaderTextureNamePrefix("material.");
+    Model cityModel("resources/objects/apocalyptic-city/source/Apocalyptic City.obj");
+    cityModel.SetShaderTextureNamePrefix("material.");
+    Model streetlampModel("resources/objects/streetlamp/streetLamp.obj");
+    streetlampModel.SetShaderTextureNamePrefix("material.");
 
     // configure (floating point) framebuffers
     // ---------------------------------------
@@ -319,12 +321,12 @@ int main()
 
     // Light positions
     std::vector<glm::vec3> lightPositions;
-    lightPositions.push_back(glm::vec3( 5.0f, 5.5f,  1.5f));
-    lightPositions.push_back(glm::vec3(37.0f, -1.0f, -15.0f));
+    lightPositions.push_back(glm::vec3( 34.38f, 6.0f,  -24.1f));
+    lightPositions.push_back(glm::vec3(34.38f, 6.0f, -20.64));
 
     // Light colors
     std::vector<glm::vec3> lightColors;
-    lightColors.push_back(glm::vec3(5.0f,   5.0f,  5.0f));
+    lightColors.push_back(glm::vec3(3.0f,   3.0f,  3.0f));
     lightColors.push_back(glm::vec3(5.0f,  5.0f,  5.0f));
 
     // LOADING SHADERS
@@ -429,12 +431,19 @@ int main()
 
         // render the loaded model
 
-        // main hall model
+        // city model
         glm::mat4 modelCity = glm::mat4(1.0f);
         modelCity = glm::translate(modelCity, glm::vec3(0.0f, -5.0f, 0.0f));
         modelCity = glm::scale(modelCity, glm::vec3(0.0625f)); // it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", modelCity);
-        hallModel.Draw(ourShader);
+        cityModel.Draw(ourShader);
+
+        // street lamp model
+        glm::mat4 modelStreetlamp = glm::mat4(1.0f);
+        modelStreetlamp = glm::translate(modelStreetlamp, glm::vec3(34.43f, -4.65f, -22.39f));
+        modelStreetlamp = glm::scale(modelStreetlamp, glm::vec3(0.75f)); // it's a bit too big for our scene, so scale it down
+        ourShader.setMat4("model", modelStreetlamp);
+        streetlampModel.Draw(ourShader);
 
         // finally show all the light sources as bright cubes
         lightShader.use();
@@ -445,7 +454,7 @@ int main()
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, glm::vec3(lightPositions[i]));
-            model = glm::scale(model, glm::vec3(0.25f));
+            model = glm::scale(model, glm::vec3(0.37f));
             lightShader.setMat4("model", model);
             lightShader.setVec3("lightColor", lightColors[i]);
             renderCube();
