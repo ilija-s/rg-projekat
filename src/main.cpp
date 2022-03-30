@@ -38,6 +38,7 @@ const unsigned int SCR_HEIGHT = 600;
 bool bloom = true;
 bool bloomKeyPressed = true;
 bool flashLightOn = true;
+bool freeCamera = false;
 float exposure = 1.0f;
 
 // camera
@@ -243,6 +244,10 @@ int main()
     cityModel.SetShaderTextureNamePrefix("material.");
     Model streetlampModel("resources/objects/streetlamp/streetLamp.obj");
     streetlampModel.SetShaderTextureNamePrefix("material.");
+    Model alienshipModel("resources/objects/alien-ship/UFO_Saucer_A1.obj");
+    alienshipModel.SetShaderTextureNamePrefix("material.");
+    Model alienModel("resources/objects/alien/alien.obj");
+    alienModel.SetShaderTextureNamePrefix("material.");
 
     // configure (floating point) framebuffers
     // ---------------------------------------
@@ -300,7 +305,7 @@ int main()
     // ----------------------------------------------
     PointLight &pointLight1 = programState->pointLight1;
     pointLight1.position = glm::vec3(4.0f, 4.0, 0.0);
-    pointLight1.ambient = glm::vec3(0.1, 0.1, 0.1);
+    pointLight1.ambient = glm::vec3(1.0, 1.0, 1.0);
     pointLight1.diffuse = glm::vec3(0.6, 0.6, 0.6);
     pointLight1.specular = glm::vec3(1.0, 1.0, 1.0);
 
@@ -325,8 +330,8 @@ int main()
 
     // Light colors
     std::vector<glm::vec3> lightColors;
-    lightColors.push_back(glm::vec3(5.0f, 5.0f, 5.0f));
-    lightColors.push_back(glm::vec3(5.0f, 5.0f, 5.0f));
+    lightColors.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
+    lightColors.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
 
     // LOADING SHADERS
     // ---------------
@@ -352,10 +357,16 @@ int main()
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
         lastFrame = currentFrame;
+        float time = currentFrame;
 
         // input
         // -----
-        processInput(window);
+        if(freeCamera) {
+            processInput(window);
+        }else{
+            processInput(window);
+            programState->camera.Position.y = -0.6f;
+        }
 
         // render
         // ------
@@ -395,7 +406,7 @@ int main()
         ourShader.setVec3("dirLight.diffuse", glm::vec3(0.1f));
         ourShader.setVec3("dirLight.specular", glm::vec3(0.1f));
 
-        pointLight1.position = glm::vec3(4.0 * cos(currentFrame), 10.0f + sin(lastFrame) / 4.0f, 4.0 * sin(currentFrame));
+        pointLight1.position = glm::vec3(30.0 * cos(currentFrame) + 34.0f, 30.0f, 30.0 * sin(currentFrame) - 22.0f);
         ourShader.setVec3("pointLight1.position", pointLight1.position);
         ourShader.setVec3("pointLight1.ambient", pointLight1.ambient);
         ourShader.setVec3("pointLight1.diffuse", pointLight1.diffuse);
@@ -418,7 +429,7 @@ int main()
         {
             ourShader.setVec3("spotLight.position", programState->camera.Position);
             ourShader.setVec3("spotLight.direction", programState->camera.Front);
-            ourShader.setVec3("spotLight.ambient", 0.3f, 0.3f, 0.3f);
+            ourShader.setVec3("spotLight.ambient", 0.6f, 0.6f, 0.6f);
             ourShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
             ourShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
             ourShader.setFloat("spotLight.constant", 1.0f);
@@ -448,6 +459,20 @@ int main()
         modelStreetlamp = glm::scale(modelStreetlamp, glm::vec3(0.75f)); // it's a bit too big for our scene, so scale it down
         ourShader.setMat4("model", modelStreetlamp);
         streetlampModel.Draw(ourShader);
+
+        // alien ship model
+        glm::mat4 modelAlienship = glm::mat4(1.0f);
+        modelAlienship = glm::translate(modelAlienship, glm::vec3(30.0 * cos(currentFrame) + 34.0f, 40.0f, 30.0 * sin(currentFrame) - 22.0f));
+        modelAlienship = glm::scale(modelAlienship, glm::vec3(0.5f)); // it's a bit too big for our scene, so scale it down
+        ourShader.setMat4("model", modelAlienship);
+        alienshipModel.Draw(ourShader);
+
+        // alien model
+        glm::mat4 modelAlien = glm::mat4(1.0f);
+        modelAlien = glm::translate(modelAlien, glm::vec3( 36.0f, -5.0f, -15.0f));
+        modelAlien = glm::scale(modelAlien, glm::vec3(0.125f)); // it's a bit too big for our scene, so scale it down
+        ourShader.setMat4("model", modelAlien);
+        alienModel.Draw(ourShader);
 
         // finally show all the light sources as bright cubes
         lightShader.use();
@@ -764,5 +789,10 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
     if (key == GLFW_KEY_F && action == GLFW_PRESS)
     {
         flashLightOn = !flashLightOn;
+    }
+
+    if (key == GLFW_KEY_C && action == GLFW_PRESS)
+    {
+        freeCamera = !freeCamera;
     }
 }
