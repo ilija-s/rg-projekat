@@ -2,7 +2,7 @@
 Project for the course of Computer Graphics written in C/C++ and OpenGL 3.3
 Program skeleton taken from ```https://github.com/matf-racunarska-grafika/project_base```
 
-Video:
+Video: https://youtu.be/GOl4VfVAfho
 
 ## Run
 1. `git clone https://github.com/ilija-s/rg-projekat.git`
